@@ -12,9 +12,9 @@
 
 #include <memory>
 #include <sstream>
-#include "./zoom/zoom_sdk.h"
-#include "./zoom/meeting_service_interface.h"
-#include "./zoom/auth_service_interface.h"
+#include "zoom_sdk.h"
+#include "meeting_service_interface.h"
+#include "auth_service_interface.h"
 
 namespace gr_zoom
 {
