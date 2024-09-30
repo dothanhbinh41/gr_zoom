@@ -12,7 +12,7 @@
 
 #include <memory>
 #include <sstream>
-#include "zoom_sdk.h"
+#include "./zoom/zoom_sdk.h"
 
 namespace gr_zoom
 {
