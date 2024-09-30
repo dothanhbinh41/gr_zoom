@@ -13,6 +13,8 @@
 #include <memory>
 #include <sstream>
 #include "./zoom/zoom_sdk.h"
+#include "./zoom/meeting_service_interface.h"
+#include "./zoom/auth_service_interface.h"
 
 namespace gr_zoom
 {
@@ -63,16 +65,35 @@ namespace gr_zoom
       }
       result->Success(flutter::EncodableValue(version_stream.str()));
     }
-    else if (method_call->method_name() == "initZoom")
+    else if (method_call.method_name().compare("initZoom") == 0)
     {
-      std::string token = method_call->arguments()->StringValue("jwtToken");
+
+      const auto args = method_call.arguments();
+      const auto *mapArgs = std::get_if<flutter::EncodableMap>(args);
+      if (!mapArgs)
+      {
+        result->Error("Record", "Call missing parameters");
+        return;
+      }
+
+      std::string token;
+      GetValueFromEncodableMap(mapArgs, "jwtToken", token);
       AuthenticateSDK(token);
       result->Success();
     }
-    else if (method_call->method_name() == "joinMeeting")
+    else if (method_call.method_name().compare("joinMeeting") == 0)
     {
-      std::string meetingId = method_call->arguments()->StringValue("meetingId");
-      std::string meetingPassword = method_call->arguments()->StringValue("meetingPassword");
+      const auto args = method_call.arguments();
+      const auto *mapArgs = std::get_if<flutter::EncodableMap>(args);
+      if (!mapArgs)
+      {
+        result->Error("Record", "Call missing parameters");
+        return;
+      }
+
+      std::string meetingId, meetingPassword;
+      GetValueFromEncodableMap(mapArgs, "meetingId", meetingId);
+      GetValueFromEncodableMap(mapArgs, "meetingPassword", meetingPassword);
       JoinMeetingForAPIUser(meetingId, meetingPassword);
       result->Success();
     }
@@ -84,6 +105,8 @@ namespace gr_zoom
 
   void AuthenticateSDK(const std::string &token)
   {
+    std::wstring jwtToken = std::wstring(token.begin(), token.end());
+    const wchar_t *jwtTokenChar = jwtToken.c_str();
     // Initialize SDK with InitParam object
     ZOOM_SDK_NAMESPACE::InitParam initParam;
     ZOOM_SDK_NAMESPACE::SDKError initReturnVal(ZOOM_SDK_NAMESPACE::SDKERR_UNINITIALIZE);
@@ -99,16 +122,16 @@ namespace gr_zoom
       if (authServiceInitReturnVal == ZOOM_SDK_NAMESPACE::SDKError::SDKERR_SUCCESS)
       {
         // Create IAuthServiceEvent object to listen for Auth events from SDK
-        ZOOM_SDK_NAMESPACE::IAuthServiceEvent *authListener;
+        // ZOOM_SDK_NAMESPACE::IAuthServiceEvent *authListener;
         // Auth SDK with AuthContext object
         ZOOM_SDK_NAMESPACE::AuthContext authContext;
         ZOOM_SDK_NAMESPACE::SDKError authCallReturnValue(ZOOM_SDK_NAMESPACE::SDKERR_UNAUTHENTICATION);
         // Call SetEvent to assign your IAuthServiceEvent listener
-        yourAuthServiceEventListener = new YourAuthServiceEventListener();
-        authListener = yourAuthServiceEventListener;
-        authService->SetEvent(authListener);
+        // yourAuthServiceEventListener = new YourAuthServiceEventListener();
+        // authListener = yourAuthServiceEventListener;
+        // authService->SetEvent(authListener);
         // Provide your JWT to the AuthContext object
-        authContext.jwt_token = token;
+        authContext.jwt_token = jwtTokenChar;
         authCallReturnValue = authService->SDKAuth(authContext);
         if (authCallReturnValue == ZOOM_SDK_NAMESPACE::SDKError::SDKERR_SUCCESS)
         {
@@ -117,20 +140,34 @@ namespace gr_zoom
       }
     }
   }
-  void yourAuthServiceEventListener::onAuthenticationReturn(ZOOM_SDK_NAMESPACE::AuthResult ret)
-  {
-    if (ret == ZOOM_SDK_NAMESPACE::SDKError::AUTHRET_JWTTOKENWRONG)
-    {
-      // SDK Auth call failed because the JWT token is invalid.
-    }
-    else if (ret == ZOOM_SDK_NAMESPACE::SDKError::SDKERR_SUCCESS)
-    {
-      // SDK Authenticated successfully
-    }
-  }
+ 
+
+  // void yourAuthServiceEventListener::onAuthenticationReturn(ZOOM_SDK_NAMESPACE::AuthResult ret)
+  // {
+  //   if (ret == ZOOM_SDK_NAMESPACE::AuthResult::AUTHRET_JWTTOKENWRONG)
+  //   {
+  //     // SDK Auth call failed because the JWT token is invalid.
+  //   }
+  //   else if (ret == ZOOM_SDK_NAMESPACE::SDKError::SDKERR_SUCCESS)
+  //   {
+  //     // SDK Authenticated successfully
+  //   }
+  // }
 
   void JoinMeetingForAPIUser(const std::string &meetingId, const std::string &meetingPassword)
   {
+
+    ZOOM_SDK_NAMESPACE::IMeetingService *meetingService;
+    ZOOM_SDK_NAMESPACE::SDKError meetingServiceInitReturnVal = ZOOM_SDK_NAMESPACE::CreateMeetingService(&meetingService);
+    if (meetingServiceInitReturnVal == ZOOM_SDK_NAMESPACE::SDKError::SDKERR_SUCCESS)
+    {
+      // MeetingService was created successfully, it is recommended to store this value for use across the application
+    }
+
+    UINT64 meetingIdLong = std::stoull(meetingId);
+    std::wstring meetingPasswordStr = std::wstring(meetingPassword.begin(), meetingPassword.end());
+    const wchar_t *meetingPasswordChar = meetingPasswordStr.c_str();
+
     // Join meeting for end user with JoinParam object
     ZOOM_SDK_NAMESPACE::JoinParam joinMeetingParam;
     // Provide meeting credentials for end user using JoinParam4NormalUser
@@ -138,18 +175,34 @@ namespace gr_zoom
 
     joinMeetingParam.userType = ZOOM_SDK_NAMESPACE::SDK_UT_NORMALUSER;
 
-    joinMeetingForNormalUserLoginParam.meetingNumber = meetingId;
-    joinMeetingForNormalUserLoginParam.psw = meetingPassword;
+    joinMeetingForNormalUserLoginParam.meetingNumber = meetingIdLong;
+    joinMeetingForNormalUserLoginParam.psw = meetingPasswordChar;
     joinMeetingForNormalUserLoginParam.userName = L"Display name for user";
 
     joinMeetingParam.param.normaluserJoin = joinMeetingForNormalUserLoginParam;
 
     ZOOM_SDK_NAMESPACE::SDKError joinMeetingCallReturnValue(ZOOM_SDK_NAMESPACE::SDKERR_UNKNOWN);
-    joinMeetingCallReturnValue = yourMeetingServiceInstance->Join(joinMeetingParam);
+    joinMeetingCallReturnValue = meetingService->Join(joinMeetingParam);
     if (joinMeetingCallReturnValue == ZOOM_SDK_NAMESPACE::SDKError::SDKERR_SUCCESS)
     {
       // Join meeting call succeeded, listen for join meeting result using the onMeetingStatusChanged callback
     }
+  }
+
+  template <typename T>
+  bool GetValueFromEncodableMap(const flutter::EncodableMap *map,
+                                const char *key, T &out)
+  {
+    auto iter = map->find(flutter::EncodableValue(key));
+    if (iter != map->end() && !iter->second.IsNull())
+    {
+      if (auto *value = std::get_if<T>(&iter->second))
+      {
+        out = *value;
+        return true;
+      }
+    }
+    return false;
   }
 
 } // namespace gr_zoom
