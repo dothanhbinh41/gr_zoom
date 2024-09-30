@@ -110,7 +110,7 @@ include_directories("${ZOOM_SDK_PATH}/h")
 link_directories("${ZOOM_SDK_PATH}/lib")
 
 # Liên kết các thư viện cần thiết từ Zoom SDK
-target_link_libraries(${PLUGIN_NAME} PRIVATE zoom_sdk zoom_sdk_util lib)  # Liên kết với các thư viện cần thiết
+target_link_libraries(${PLUGIN_NAME} PRIVATE sdk)  # Liên kết với các thư viện cần thiết
 
 # Đảm bảo tệp .dll được sao chép vào thư mục xuất bản khi bạn build dự án
 add_custom_command(TARGET ${PLUGIN_NAME} POST_BUILD
