@@ -101,7 +101,7 @@ endif()
 
 
 # Đặt đường dẫn đến Zoom SDK
-set(ZOOM_SDK_PATH "./zoom")  # Thay thế bằng đường dẫn thực tế đến Zoom SDK
+set(ZOOM_SDK_PATH "${PLUGIN_SOURCES}/zoom")  # Thay thế bằng đường dẫn thực tế đến Zoom SDK
 
 # Thêm thư mục chứa các tệp header (Zoom SDK header files)
 include_directories("${ZOOM_SDK_PATH}/h")
