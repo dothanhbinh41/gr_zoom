@@ -35,9 +35,13 @@ flutter:
         pluginClass: ZoomPlugin
 <<<<<<< HEAD
       windows:
+<<<<<<< HEAD
         pluginClass: GrZoomPlugin
 =======
 >>>>>>> parent of aa25999 (add windows)
+=======
+        pluginClass: ZoomPlugin
+>>>>>>> parent of 54ce47e (update path)
 
   # To add assets to your plugin package, add an assets section, like this:
   # assets:
