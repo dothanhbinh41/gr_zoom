@@ -33,8 +33,11 @@ flutter:
         pluginClass: ZoomPlugin
       ios:
         pluginClass: ZoomPlugin
+<<<<<<< HEAD
       windows:
         pluginClass: GrZoomPlugin
+=======
+>>>>>>> parent of aa25999 (add windows)
 
   # To add assets to your plugin package, add an assets section, like this:
   # assets:
