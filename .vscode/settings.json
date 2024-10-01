@@ -2,6 +2,8 @@
     "files.associations": {
         "locale": "cpp",
         "xstring": "cpp",
-        "iosfwd": "cpp"
+        "iosfwd": "cpp",
+        "memory": "cpp",
+        "sstream": "cpp"
     }
 }

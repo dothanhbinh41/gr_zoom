@@ -32,16 +32,9 @@ flutter:
         package: com.webcare.zoom
         pluginClass: ZoomPlugin
       ios:
-        pluginClass: ZoomPlugin
-<<<<<<< HEAD
-      windows:
-<<<<<<< HEAD
-        pluginClass: GrZoomPlugin
-=======
->>>>>>> parent of aa25999 (add windows)
-=======
-        pluginClass: ZoomPlugin
->>>>>>> parent of 54ce47e (update path)
+        pluginClass: ZoomPlugin 
+      windows: 
+        pluginClass: GrZoomPluginCApi 
 
   # To add assets to your plugin package, add an assets section, like this:
   # assets:

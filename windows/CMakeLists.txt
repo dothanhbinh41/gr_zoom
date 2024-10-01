@@ -100,20 +100,20 @@ gtest_discover_tests(${TEST_RUNNER})
 endif()
 
 
-# Đặt đường dẫn đến Zoom SDK
-set(ZOOM_SDK_PATH "${PLUGIN_SOURCES}/zoom")  # Thay thế bằng đường dẫn thực tế đến Zoom SDK
+# # Đặt đường dẫn đến Zoom SDK
+# set(ZOOM_SDK_PATH "${PLUGIN_SOURCES}/zoom")  # Thay thế bằng đường dẫn thực tế đến Zoom SDK
 
-# Thêm thư mục chứa các tệp header (Zoom SDK header files)
-include_directories("${ZOOM_SDK_PATH}/h")
+# # Thêm thư mục chứa các tệp header (Zoom SDK header files)
+# include_directories("${ZOOM_SDK_PATH}/h")
 
-# Thêm thư mục chứa các tệp thư viện (.lib files)
-link_directories("${ZOOM_SDK_PATH}/lib")
+# # Thêm thư mục chứa các tệp thư viện (.lib files)
+# link_directories("${ZOOM_SDK_PATH}/lib")
 
-# Liên kết các thư viện cần thiết từ Zoom SDK
-target_link_libraries(${PLUGIN_NAME} PRIVATE sdk)  # Liên kết với các thư viện cần thiết
+# # Liên kết các thư viện cần thiết từ Zoom SDK
+# target_link_libraries(${PLUGIN_NAME} PRIVATE sdk)  # Liên kết với các thư viện cần thiết
 
-# Đảm bảo tệp .dll được sao chép vào thư mục xuất bản khi bạn build dự án
-add_custom_command(TARGET ${PLUGIN_NAME} POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-    "${ZOOM_SDK_PATH}/bin/zoom_sdk.dll"
-    "$<TARGET_FILE_DIR:${PLUGIN_NAME}>")
+# # Đảm bảo tệp .dll được sao chép vào thư mục xuất bản khi bạn build dự án
+# add_custom_command(TARGET ${PLUGIN_NAME} POST_BUILD
+#     COMMAND ${CMAKE_COMMAND} -E copy_if_different
+#     "${ZOOM_SDK_PATH}/bin/zoom_sdk.dll"
+#     "$<TARGET_FILE_DIR:${PLUGIN_NAME}>")

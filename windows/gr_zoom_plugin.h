@@ -25,13 +25,7 @@ namespace gr_zoom
         // Called when a method is called on this plugin's channel from Dart.
         void HandleMethodCall(
             const flutter::MethodCall<flutter::EncodableValue> &method_call,
-            std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
-
-        template <typename T>
-        bool GetValueFromEncodableMap(const flutter::EncodableMap *map,
-                                      const std::string &key, T &out);
-        void AuthenticateSDK(const std::string &token);
-        void JoinMeetingForAPIUser(const std::string &meetingId, const std::string &meetingPassword);
+            std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result); 
     };
 
 } // namespace gr_zoom

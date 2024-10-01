@@ -95,4 +95,9 @@ class MethodChannelZoom extends ZoomPlatform {
   Stream<dynamic> onMeetingStatus() {
     return eventChannel.receiveBroadcastStream();
   }
+
+  @override
+  Future<String?> getPlatformVersion() {
+    return channel.invokeMethod<String?>('getPlatformVersion');
+  }
 }
